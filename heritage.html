@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose Your Own Heritage Story</title>
+  <style>
+    :root {
+      --bg: #f8f5ef;
+      --text: #3b2f1d;
+      --accent: #a67c52;
+      --accent-dark: #705335;
+      --card-bg: #fffaf3;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+      color: #fff;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem;
+      display: none;
+    }
+
+    main.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border: 1px solid #e5dccb;
+    }
+
+    footer {
+      background: #fffaf3;
+      border-top: 1px solid #e5dccb;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      position: sticky;
+      bottom: 0;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #7a6a55;
+      cursor: pointer;
+    }
+
+    .nav-item.active {
+      color: var(--accent-dark);
+      font-weight: 600;
+    }
+
+    /* ====== Login & Signup ====== */
+    #auth-screen {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-box {
+      background: #fffaf3;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
+    button:hover { background: var(--accent-dark); }
+    .link { color: var(--accent-dark); cursor: pointer; font-weight: 600; }
+    .hidden { display: none; }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      main { max-width: 600px; margin: 0 auto; }
+    }
+  </style>
+<link rel="manifest" href="manifest.json">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log("Service Worker Registered"));
+  }
+</script>
+</head>
+
+<body>
+  <header>
+    <h1>Choose Your Own Heritage Story</h1>
+    <p id="userGreeting">Rediscover Batangas Through Augmented Reality</p>
+  </header>
+
+  <!-- ===== Auth Section ===== -->
+  <section id="auth-screen">
+    <div class="auth-box">
+      <h2 id="authTitle">Sign Up</h2>
+      <input type="text" id="username" placeholder="Full Name">
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="password" placeholder="Password">
+      <button id="authBtn">Create Account</button>
+      <p id="toggleAuth">Already have an account? <span class="link" onclick="toggleAuthMode()">Login</span></p>
+    </div>
+  </section>
+
+  <!-- ===== Main App Content ===== -->
+  <main id="home" class="active">
+    <div class="card">
+      <h2>Welcome to Batangas Heritage</h2>
+      <p>Experience history like never before. Use your camera to explore ancestral homes, witness historical scenes unfold, and uncover secrets of Batangas’ past.</p>
+    </div>
+    <div class="card">
+      <h2>Start Your Adventure</h2>
+      <p>Choose your own path — follow the footsteps of an ilustrado, artisan, or revolutionary. Scan markers to unlock AR stories.</p>
+    </div>
+  </main>
+
+  <main id="map">
+    <div class="card">
+      <h2>Explore the Map</h2>
+      <p>Discover heritage sites and landmarks around Batangas.</p>
+    </div>
+  </main>
+
+  <main id="activities">
+    <div class="card">
+      <h2>Activities</h2>
+      <p>Join missions and interactive AR stories in different heritage locations.</p>
+    </div>
+  </main>
+
+  <main id="gallery">
+    <div class="card">
+      <h2>Gallery</h2>
+      <p>View photos and AR snapshots from your adventures.</p>
+    </div>
+  </main>
+
+  <main id="profile">
+    <div class="card">
+      <h2>Profile & Settings</h2>
+      <p><strong>Name:</strong> <span id="displayName">Guest</span></p>
+      <input type="text" id="newName" placeholder="Change display name">
+      <button onclick="updateName()">Update Name</button>
+      <button style="background:#b34d4d; margin-top:10px;" onclick="logout()">Log Out</button>
+    </div>
+  </main>
+
+  <!-- ===== Bottom Nav ===== -->
+  <footer id="navBar" class="hidden">
+    <div class="nav-item active" onclick="showSection('home', this)">Home</div>
+    <div class="nav-item" onclick="showSection('map', this)">Map</div>
+    <div class="nav-item" onclick="showSection('activities', this)">Activities</div>
+    <div class="nav-item" onclick="showSection('gallery', this)">Gallery</div>
+    <div class="nav-item" onclick="showSection('profile', this)">Profile</div>
+  </footer>
+
+  <script>
+    let isLoginMode = false;
+    let currentUser = null;
+
+    function toggleAuthMode() {
+      isLoginMode = !isLoginMode;
+      document.getElementById("authTitle").innerText = isLoginMode ? "Login" : "Sign Up";
+      document.getElementById("authBtn").innerText = isLoginMode ? "Login" : "Create Account";
+      document.getElementById("toggleAuth").innerHTML = isLoginMode
+        ? 'Don’t have an account? <span class="link" onclick="toggleAuthMode()">Sign Up</span>'
+        : 'Already have an account? <span class="link" onclick="toggleAuthMode()">Login</span>';
+    }
+
+    document.getElementById("authBtn").addEventListener("click", () => {
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      if (!email || !password || (!isLoginMode && !username)) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      if (isLoginMode) {
+        const storedUser = JSON.parse(localStorage.getItem(email));
+        if (storedUser && storedUser.password === password) {
+          currentUser = storedUser;
+          startApp();
+        } else {
+          alert("Invalid login credentials.");
+        }
+      } else {
+        const user = { username, email, password };
+        localStorage.setItem(email, JSON.stringify(user));
+        currentUser = user;
+        startApp();
+      }
+    });
+
+    function startApp() {
+      document.getElementById("auth-screen").classList.add("hidden");
+      document.getElementById("navBar").classList.remove("hidden");
+      document.querySelector("main#home").classList.add("active");
+      document.getElementById("userGreeting").innerText = `Welcome, ${currentUser.username}`;
+      document.getElementById("displayName").innerText = currentUser.username;
+    }
+
+    function showSection(id, el) {
+      document.querySelectorAll("main").forEach(m => m.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+      el.classList.add("active");
+    }
+
+    function updateName() {
+      const newName = document.getElementById("newName").value;
+      if (!newName.trim()) return alert("Please enter a name.");
+      currentUser.username = newName;
+      localStorage.setItem(currentUser.email, JSON.stringify(currentUser));
+      document.getElementById("displayName").innerText = newName;
+      document.getElementById("userGreeting").innerText = `Welcome, ${newName}`;
+      alert("Name updated successfully!");
+    }
+
+    function logout() {
+      currentUser = null;
+      document.getElementById("auth-screen").classList.remove("hidden");
+      document.getElementById("navBar").classList.add("hidden");
+      document.querySelectorAll("main").forEach(m => m.classList.remove("active"));
+      document.getElementById("home").classList.add("active");
+      document.getElementById("userGreeting").innerText = "Rediscover Batangas Through Augmented Reality";
+      document.getElementById("username").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
+    }
+  </script>
+</body>
+</html>
